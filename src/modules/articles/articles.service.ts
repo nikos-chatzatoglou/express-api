@@ -19,6 +19,7 @@ export async function createArticle(
 }
 
 export async function getArticleById(articleId: number) {
+	console.log("getArticleById", articleId);
 	return prisma.article.findUnique({
 		where: {
 			id: articleId,

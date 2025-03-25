@@ -6,6 +6,7 @@ export const authenticate = (
 	res: Response,
 	next: NextFunction,
 ) => {
+	console.log("authenticate");
 	const token = req.headers.authorization?.split(" ")[1];
 	if (!token) {
 		// Return early if no token is provided

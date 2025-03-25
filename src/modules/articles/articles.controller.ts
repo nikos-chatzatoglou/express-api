@@ -19,9 +19,22 @@ export const createArticleHandler: RequestHandler = async (req, res) => {
 	res.status(201).send(article);
 };
 
-export const getArticleByIdHandler: RequestHandler = async (req, res) => {
-	const article = await getArticleById(Number(req.params.id));
-	res.status(200).send(article);
+export const getArticleByIdHandler: RequestHandler = async (
+	req: Request,
+	res: Response,
+) => {
+	const articleId = parseInt(req.params.id, 10);
+
+	if (isNaN(articleId)) {
+		return res.status(400).json({ error: "Invalid article ID" });
+	}
+
+	try {
+		const article = await getArticleById(articleId);
+		res.json(article);
+	} catch (error) {
+		res.status(500).json({ error: "Server error" });
+	}
 };
 
 export const updateArticleHandler: RequestHandler = async (req, res) => {
