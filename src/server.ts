@@ -8,12 +8,15 @@ import authorizationRoutes from "./modules/authorization/authorization.routes";
 import followingRoutes from "./modules/following/following.routes";
 import "./modules/authentication/passport"; // Import the Passport configuration
 import { errorHandler } from "./middleware/errorHandler";
+import { setupSwaggerDocs } from "./swagger";
 
 function createServer() {
 	const app = express();
 	app.use(express.json());
 	app.use(passport.initialize());
 	app.use(errorHandler);
+
+	setupSwaggerDocs(app);
 
 	app.get("/healthcheck", (_req, res) => {
 		res.send("API is up and running!");
