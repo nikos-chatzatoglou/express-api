@@ -1,7 +1,12 @@
 import { Request, Response } from "express";
-import { registerUser, loginUser } from "./authentication.service";
 
-export async function register(req: Request, res: Response) {
+import { registerUser, loginUser } from "./authentication.service";
+import { LoginUserInput, RegisterUserInput } from "./authentication.schemas";
+
+export async function register(
+	req: Request<{}, {}, RegisterUserInput>,
+	res: Response,
+) {
 	const { email, username, password } = req.body;
 	try {
 		const token = await registerUser(email, username, password);
@@ -13,7 +18,10 @@ export async function register(req: Request, res: Response) {
 	}
 }
 
-export async function login(req: Request, res: Response) {
+export async function login(
+	req: Request<{}, {}, LoginUserInput>,
+	res: Response,
+) {
 	const { email, password } = req.body;
 	try {
 		const token = await loginUser(email, password);

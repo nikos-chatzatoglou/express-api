@@ -7,6 +7,8 @@ import {
 } from "./authorization.controller";
 import { authenticate } from "../../middleware/authenticate";
 import { authorize } from "../../middleware/authorize";
+import { validate } from "../../middleware/validate";
+import { updateRoleRequestSchema } from "./authorization.schemas";
 
 const router = Router();
 
@@ -18,7 +20,7 @@ router.get(
 );
 router.post(
 	"/role-requests/:id",
-	[authenticate, authorize(["ADMIN"])],
+	[authenticate, authorize(["ADMIN"]), validate(updateRoleRequestSchema)],
 	updateRoleRequest,
 );
 
