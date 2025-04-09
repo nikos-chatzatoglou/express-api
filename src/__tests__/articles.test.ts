@@ -1,6 +1,21 @@
 import request from "supertest";
 import createServer from "../server";
 import { PrismaClient } from "@prisma/client";
+import { Request, Response, NextFunction } from "express";
+
+// Mock the authenticate middleware
+jest.mock("../middleware/authenticate", () => ({
+	authenticate: (req: Request, res: Response, next: NextFunction) => {
+		// Add user ID to res.locals based on authorization header
+		const token = req.headers.authorization?.split(" ")[1];
+		if (!token) {
+			res.status(401).json({ message: "No token provided" });
+			return;
+		}
+		res.locals.user = token === "WRITER" ? 2 : 1;
+		next();
+	},
+}));
 
 const prisma = new PrismaClient();
 const app = createServer();
@@ -117,6 +132,13 @@ describe("articles", () => {
 		});
 		describe("given the user is logged in and is a WRITER but he's not the author of the article", () => {
 			it("should return a 400 status code and an error", async () => {
+				// Mock article to return an article with a different authorId
+				//@ts-ignore
+				prisma.article.findUnique.mockResolvedValue({
+					...mockArticle,
+					authorId: 1, // Different from WRITER user id (2)
+				});
+
 				const response = await request(app)
 					.put("/articles/1")
 					.set("Authorization", "Bearer WRITER")
@@ -131,6 +153,13 @@ describe("articles", () => {
 
 		describe("given the user is logged in and is a WRITER and is the author of the article and provided the full body", () => {
 			it("should return a 200 status code and the created article", async () => {
+				// First mock getArticleById to return article with matching authorId
+				//@ts-ignore
+				prisma.article.findUnique.mockResolvedValue({
+					...mockArticle,
+					authorId: 2, // Same as WRITER user id
+				});
+
 				//@ts-ignore
 				prisma.article.update.mockResolvedValue(mockArticle);
 
@@ -167,6 +196,13 @@ describe("articles", () => {
 
 		describe("given the user is logged in and is a WRITER but he's not the author of the article", () => {
 			it("should return a 400 status code and an error", async () => {
+				// Mock article to return an article with a different authorId
+				//@ts-ignore
+				prisma.article.findUnique.mockResolvedValue({
+					...mockArticle,
+					authorId: 1, // Different from WRITER user id (2)
+				});
+
 				const response = await request(app)
 					.delete("/articles/1")
 					.set("Authorization", "Bearer WRITER");
@@ -177,6 +213,13 @@ describe("articles", () => {
 
 		describe("given the user is logged in and is a WRITER and is the author of the article", () => {
 			it("should return a 204 status code", async () => {
+				// First mock getArticleById to return article with matching authorId
+				//@ts-ignore
+				prisma.article.findUnique.mockResolvedValue({
+					...mockArticle,
+					authorId: 2, // Same as WRITER user id
+				});
+
 				//@ts-ignore
 				prisma.article.delete.mockResolvedValue(mockArticle);
 

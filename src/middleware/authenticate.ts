@@ -5,7 +5,7 @@ export const authenticate = (
 	req: Request,
 	res: Response,
 	next: NextFunction,
-) => {
+): void => {
 	console.log("authenticate");
 	const token = req.headers.authorization?.split(" ")[1];
 	if (!token) {
@@ -18,7 +18,6 @@ export const authenticate = (
 		const decoded = jwt.verify(token, "your-secret-key");
 		if (typeof decoded !== "string" && "id" in decoded) {
 			// Attach the user ID to `res.locals` and proceed
-
 			res.locals.user = (decoded as JwtPayload).id;
 			next();
 		} else {

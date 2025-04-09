@@ -22,17 +22,23 @@ router.get("/", getArticlesHandler);
 router.get("/:articleId", validate(articleParamsSchema), getArticleByIdHandler);
 router.post(
 	"/",
-	[authenticate, authorize(["WRITER"]), validate(createArticleSchema)],
+	authenticate,
+	authorize(["WRITER"]),
+	validate(createArticleSchema),
 	createArticleHandler,
 );
 router.put(
 	"/:articleId",
-	[authenticate, authorize(["WRITER"]), validate(updateArticleSchema)],
+	authenticate,
+	authorize(["WRITER"]),
+	validate(updateArticleSchema),
 	updateArticleHandler,
 );
 router.delete(
 	"/:articleId",
-	[authenticate, authorize(["WRITER"]), validate(articleParamsSchema)],
+	authenticate,
+	authorize(["WRITER"]),
+	validate(articleParamsSchema),
 	deleteArticleHandler,
 );
 

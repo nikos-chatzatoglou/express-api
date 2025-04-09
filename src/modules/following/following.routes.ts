@@ -15,7 +15,8 @@ const router = Router();
 // Get articles from users the logged-in user is following
 router.get(
 	"/feed",
-	[authenticate, validate(followingFeedSchema)],
+	authenticate,
+	validate(followingFeedSchema),
 	getFeedArticlesHandler,
 );
 
@@ -25,14 +26,16 @@ router.get("/users", authenticate, getFollowingUsersHandler);
 // Follow a user by their user ID
 router.post(
 	"/:userId/follow",
-	[authenticate, validate(followUserSchema)],
+	authenticate,
+	validate(followUserSchema),
 	followUserHandler,
 );
 
 // Unfollow a user by their user ID
 router.delete(
 	"/:userId/unfollow",
-	[authenticate, validate(followUserSchema)],
+	authenticate,
+	validate(followUserSchema),
 	unfollowUserHandler,
 );
 

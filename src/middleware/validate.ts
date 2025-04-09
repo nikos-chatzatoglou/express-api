@@ -3,15 +3,15 @@ import { AnyZodObject } from "zod";
 
 export const validate =
 	(schema: AnyZodObject) =>
-	(req: Request, res: Response, next: NextFunction) => {
+	(req: Request, res: Response, next: NextFunction): void => {
 		try {
 			schema.parse({
 				params: req.params,
 				body: req.body,
 				query: req.query,
 			});
-			return next();
+			next();
 		} catch (e: any) {
-			return res.status(400).send(e.errors);
+			res.status(400).send(e.errors);
 		}
 	};

@@ -12,7 +12,7 @@ import { FollowUserType, FollowingFeedType } from "./following.schemas";
 export async function getFeedArticlesHandler(
 	req: Request<{}, {}, {}, FollowingFeedType["query"]>,
 	res: Response,
-) {
+): Promise<void> {
 	const userId = res.locals.user;
 	const { limit = 5, offset = 0, search = "" } = req.query;
 	// Default limit to 5 articles if limit is not provided
@@ -26,32 +26,35 @@ export async function getFeedArticlesHandler(
 		search,
 	);
 
-	return res.json(articles);
+	res.json(articles);
 }
 
 // Handler to get the list of users that the current user is following and followed by
-export async function getFollowingUsersHandler(req: Request, res: Response) {
+export async function getFollowingUsersHandler(
+	req: Request,
+	res: Response,
+): Promise<void> {
 	const userId = res.locals.user;
 
 	const users = await getFollowingUsers(userId);
 
-	return res.json(users);
+	res.json(users);
 }
 
 // Handler to follow a user
 export async function followUserHandler(
 	req: Request<FollowUserType["params"]>,
 	res: Response,
-) {
+): Promise<void> {
 	console.log("followUserHandler");
 	const userId = res.locals.user;
 	const followUserId = Number(req.params.userId);
 
 	try {
 		await followUser(userId, followUserId);
-		return res.status(201).json({ message: "User Followed Successfully" });
+		res.status(201).json({ message: "User Followed Successfully" });
 	} catch (error) {
-		return res.status(400).json({ message: "User already followed" });
+		res.status(400).json({ message: "User already followed" });
 	}
 }
 
@@ -59,14 +62,14 @@ export async function followUserHandler(
 export async function unfollowUserHandler(
 	req: Request<FollowUserType["params"]>,
 	res: Response,
-) {
+): Promise<void> {
 	const userId = res.locals.user;
 	const followUserId = req.params.userId;
 
 	try {
 		await unfollowUser(userId, Number(followUserId));
-		return res.status(204).json();
+		res.status(204).json();
 	} catch (error) {
-		return res.status(400).json({ message: "User not followed" });
+		res.status(400).json({ message: "User not followed" });
 	}
 }
