@@ -14,6 +14,7 @@ import {
 } from "./articles.schemas";
 
 export async function getArticlesHandler(req: Request, res: Response) {
+	console.log("getArticlesHandler");
 	const articles = await getArticles();
 	return res.status(200).send(articles);
 }
